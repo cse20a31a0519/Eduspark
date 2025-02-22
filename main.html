@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSpark</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg fixed w-full top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="logo text-2xl font-bold text-white">EduSpark</div>
+                <div class="search-bar">
+                    <input type="text" id="search-bar" placeholder="Search courses..." class="px-4 py-2 rounded-lg">
+                </div>
+                <div class="nav-links flex items-center space-x-4">
+                    <span id="welcome-message" class="text-white">Hi, Welcome User</span>
+                    <button id="login-btn" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Login</button>
+                    <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 hidden">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="fixed left-0 top-16 h-screen w-64 bg-white shadow-lg p-4">
+        <ul class="space-y-4">
+            <li><a href="#" id="home-link" class="text-blue-600 hover:text-blue-800">Home</a></li>
+            <li><a href="#" id="enrolled-courses-link" class="text-gray-700 hover:text-blue-600">Enrolled Courses</a></li>
+            <li><a href="#" id="profile-link" class="text-gray-700 hover:text-blue-600">User Profile</a></li>
+            <li><a href="#" id="payments-link" class="text-gray-700 hover:text-blue-600">Payments</a></li>
+            <li><a href="#" id="certificates-link" class="text-gray-700 hover:text-blue-600">Certificates</a></li>
+            <li><a href="#" id="saved-videos-link" class="text-gray-700 hover:text-blue-600">Saved Videos</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 mt-16 p-8 flex-grow">
+        <!-- Default Home Section -->
+        <div id="default-home" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card bg-white p-6 rounded-lg shadow-lg">
+                <img src="https://thumbs.dreamstime.com/b/web-development-coding-programming-internet-technology-business-concept-web-development-coding-programming-internet-technology-121903546.jpg" alt="Web Development" class="w-full h-48 object-cover rounded mb-4">
+                <h3 class="text-xl font-bold mb-4">Web Development</h3>
+                <button class="explore-now bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" data-category="It">Explore Now</button>
+            </div>
+            <div class="card bg-white p-6 rounded-lg shadow-lg">
+                <img src="https://i.ytimg.com/vi/yh2pLdDb87c/maxresdefault.jpg" alt="Data Science" class="w-full h-48 object-cover rounded mb-4">
+                <h3 class="text-xl font-bold mb-4">Data Science</h3>
+                <button class="explore-now bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" data-category="DataScience">Explore Now</button>
+            </div>
+            <div class="card bg-white p-6 rounded-lg shadow-lg">
+                <img src="https://iggmarketing.com/wp-content/uploads/2020/12/Skype_Picture_2020_12_28T07_27_57_610Z.png" alt="Designing" class="w-full h-48 object-cover rounded mb-4">
+                <h3 class="text-xl font-bold mb-4">Designing</h3>
+                <button class="explore-now bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" data-category="Designing">Explore Now</button>
+            </div>
+        </div>
+
+        <!-- Single Course Section -->
+        <div id="single-course" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Course Details</h2>
+            <div id="single-course-content" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Courses Container -->
+        <div id="courses-container" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6 mt-8"></div>
+
+        <!-- Enrolled Courses Section -->
+        <div id="enrolled-courses" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Enrolled Courses</h2>
+            <div id="enrolled-courses-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Saved Videos Section -->
+        <div id="saved-videos" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Saved Videos</h2>
+            <div id="saved-videos-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Payments Section -->
+        <div id="payments" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Payments</h2>
+            <div id="payments-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Certificates Section -->
+        <div id="certificates" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Certificates</h2>
+            <div id="certificates-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white text-center p-4 mt-8">
+        <p>&copy; 2023 EduSpark. All rights reserved.</p>
+    </footer>
+
+    <script src="main.js" type="module"></script>
+    <script src="single-course.js" type="module"></script>
+</body>
+</html>
+
+
+
+
+
+

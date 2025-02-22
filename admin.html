@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg fixed w-full top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a class="text-2xl font-bold text-white" href="#">
+                    <i class="fas fa-graduation-cap mr-2"></i>EduSpark
+                </a>
+                <button class="navbar-toggler text-white lg:hidden" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="hidden lg:flex lg:items-center" id="navbarNav">
+                    <ul class="flex space-x-4">
+                        <li>
+                            <button id="logout" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Logout</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-4 mt-16">
+        <!-- Courses Section -->
+        <section id="courses" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Courses</h2>
+            <div id="course-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Course cards will be dynamically inserted here -->
+            </div>
+        </section>
+        
+        <!-- Users Section -->
+        <section id="users">
+            <h2 class="text-2xl font-bold mb-4">Users</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                    <thead class="bg-blue-600 text-white">
+                        <tr>
+                            <th class="py-3 px-4 text-left">User ID</th>
+                            <th class="py-3 px-4 text-left">Email</th>
+                            <th class="py-3 px-4 text-left">Enrolled Courses</th>
+                            <th class="py-3 px-4 text-left">Payments</th>
+                            <th class="py-3 px-4 text-left">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table-body" class="text-gray-700">
+                        <!-- User rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white text-center p-4 mt-8">
+        <p>&copy; 2025 Admin Panel</p>
+    </footer>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
