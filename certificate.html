@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Completion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .certificate {
+            background-color: white;
+            padding: 40px;
+            border: 10px solid #4CAF50;
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+        .certificate h1 {
+            font-size: 36px;
+            color: #333;
+        }
+        .certificate h2 {
+            font-size: 30px;
+            color: #4CAF50;
+        }
+        .certificate p {
+            font-size: 20px;
+            color: #555;
+        }
+        .certificate .course-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .certificate .date {
+            margin-top: 30px;
+            font-size: 18px;
+        }
+        .print-button {
+            margin-top: 40px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .print-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="certificate" id="certificate-content">
+        <h1>Certificate of Completion</h1>
+        <p>This certifies that</p>
+        <h2 id="student-name">[Student Name]</h2>
+        <p>has successfully completed the course:</p>
+        <h3 class="course-title" id="course-name">[Course Name]</h3>
+        <p class="date">Date: <span id="completion-date">[Date]</span></p>
+        <button class="print-button" onclick="window.print()">Print Certificate</button>
+    </div>
+
+    <script>
+        // Get parameters from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseName = urlParams.get('courseName');
+        const studentName = urlParams.get('studentName');
+        const date = new Date().toLocaleDateString();
+
+        // Populate the certificate with dynamic data
+        document.getElementById('course-name').textContent = courseName;
+        document.getElementById('student-name').textContent = studentName;
+        document.getElementById('completion-date').textContent = date;
+    </script>
+</body>
+</html>
