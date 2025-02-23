@@ -1,43 +1,64 @@
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+document.addEventListener("DOMContentLoaded", () => {
+    const courseTitle = localStorage.getItem("courseTitle");
+    const courseCategory = localStorage.getItem("courseCategory");
 
-const database = getDatabase();
-const courseTitle = localStorage.getItem("courseTitle");
-const courseCategory = localStorage.getItem("courseCategory");
-const singleCourseContent = document.getElementById("single-course-content");
-
-const fetchSingleCourse = async (title, category) => {
-    try {
-        const courseSnapshot = await get(ref(database, `admin/courses/${category}`));
-        if (!courseSnapshot.exists()) return null;
-
-        const coursesData = courseSnapshot.val();
-        return Object.values(coursesData).find(course => course.title === title);
-    } catch (error) {
-        console.error("Error fetching single course:", error);
-        return null;
-    }
-};
-
-const displaySingleCourse = (course) => {
-    if (!course) {
-        singleCourseContent.innerHTML = `<p>Course not found.</p>`;
+    if (!courseTitle || !courseCategory) {
+        alert("Course details not found.");
         return;
     }
 
-    singleCourseContent.innerHTML = `
-        <div class="card bg-white p-6 rounded-lg shadow-lg">
-            <img src="${course.imageUrl}" alt="${course.title}" class="w-full h-48 object-cover rounded mb-4">
-            <h3 class="text-xl font-bold mb-4">${course.title}</h3>
-            <p class="text-gray-600">${course.description}</p>
-            <p class="text-gray-600">Price: ${course.price || 'Free'}</p>
-            <p class="text-gray-600">Category: ${course.category}</p>
-        </div>
+    document.getElementById("course-title").innerText = courseTitle;
+
+    fetchCourseDetails(courseTitle, courseCategory);
+});
+
+const fetchCourseDetails = async (title, category) => {
+    try {
+        const response = await fetch(`https://index-16f53-default-rtdb.firebaseio.com/admin/courses/${category}.json`);
+        const coursesData = await response.json();
+
+        console.log("Fetched courses data:", coursesData); // Log the fetched data
+
+        const course = Object.values(coursesData).find(c => c.title === title);
+
+        if (course) {
+            console.log("Found course:", course); // Log the found course
+            displayCourseDetails(course);
+            if (course.video_links && course.video_links.length > 0) {
+                playVideo(course.video_links[0].url); // Play the first video by default
+            }
+        } else {
+            alert("Course not found.");
+        }
+    } catch (error) {
+        console.error("Error fetching course details:", error);
+    }
+};
+
+const displayCourseDetails = (course) => {
+    const videoList = document.getElementById("video-list");
+    videoList.innerHTML = "";
+
+    if (course.video_links && Array.isArray(course.video_links)) {
+        course.video_links.forEach(video => {
+            const videoItem = document.createElement("div");
+            videoItem.className = "video-item list-group-item list-group-item-action";
+            videoItem.innerHTML = `
+                <h5>${video.title}</h5>
+                <button class="btn btn-primary" onclick="playVideo('${video.url}')">Play</button>
+                <a class="btn btn-secondary" href="${video.url}" download>Download</a>
+            `;
+            videoList.appendChild(videoItem);
+        });
+    } else {
+        videoList.innerHTML = "<p>No videos available for this course.</p>";
+    }
+};
+
+const playVideo = (url) => {
+    console.log("Playing video:", url); // Log the video URL
+    const videoPlayer = document.getElementById("video-player");
+    videoPlayer.innerHTML = `
+        <iframe width="100%" height="800" src="${url.replace("watch?v=", "embed/")}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     `;
 };
-
-const init = async () => {
-    const course = await fetchSingleCourse(courseTitle, courseCategory);
-    displaySingleCourse(course);
-};
-
-init();

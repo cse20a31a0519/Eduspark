@@ -1,6 +1,6 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+import { getAuth, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -11,27 +11,11 @@ const firebaseConfig = {
     messagingSenderId: "171804052014",
     appId: "1:171804052014:web:c38d9d50835d551cafadbf"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
-
-// DOM elements
-const loginBtn = document.getElementById("login-btn");
-const logoutBtn = document.getElementById("logout-btn");
-const welcomeMessage = document.getElementById("welcome-message");
-const searchBar = document.getElementById("search-bar");
-const coursesContainer = document.getElementById("courses-container");
-const defaultHome = document.getElementById("default-home");
-const enrolledCoursesSection = document.getElementById("enrolled-courses");
-const savedVideosSection = document.getElementById("saved-videos");
-const paymentsSection = document.getElementById("payments");
-const certificatesSection = document.getElementById("certificates");
-
-let userId = null;
-
-// Fetch and display courses
+// Fetch courses from the database
 const fetchCourses = async (selectedCategory = null) => {
     try {
         const coursesSnapshot = await get(ref(database, "admin/courses"));
@@ -40,147 +24,299 @@ const fetchCourses = async (selectedCategory = null) => {
         const coursesData = coursesSnapshot.val();
         const allCourses = [];
 
+        // Loop through categories
         Object.keys(coursesData).forEach((category) => {
             if (!selectedCategory || selectedCategory === category) {
                 const categoryCourses = coursesData[category];
                 Object.values(categoryCourses).forEach((course) => {
-                    allCourses.push({ ...course, type: course.type || "free", category });
+                    const courseId = course.id || `${category}-${course.title}`;
+                    allCourses.push({ ...course, type: course.type || "free", id: courseId, category });
                 });
             }
         });
 
+        console.log("Courses retrieved successfully:", allCourses);
         return allCourses;
     } catch (error) {
         console.error("Error fetching courses:", error);
         return [];
     }
 };
-
-// Display courses
-const displayCourses = (courses) => {
-    coursesContainer.innerHTML = "";
-    courses.forEach((course) => {
-        const courseCard = document.createElement("div");
-        courseCard.className = "bg-white p-6 rounded-lg shadow-lg";
-        courseCard.innerHTML = `
-            <img src="${course.imageUrl}" alt="${course.title}" class="w-full h-48 object-cover rounded mb-4">
-            <h3 class="text-xl font-bold">${course.title}</h3>
-            <p class="text-gray-600">${course.description}</p>
-            <button class="play-all bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4" data-course-title="${course.title}">Play All</button>
-            <button class="enroll bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-2" data-course-title="${course.title}">Enroll</button>
-        `;
-        coursesContainer.appendChild(courseCard);
-    });
-};
-
-// Event listeners for explore buttons
-document.querySelectorAll(".explore-now").forEach(button => {
-    button.addEventListener("click", (e) => {
-        const category = e.target.getAttribute("data-category");
-        fetchCourses(category).then(courses => {
-            coursesContainer.classList.remove("hidden");
-            displayCourses(courses);
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        const userId = user.uid; // Ensure userId is a string
+        localStorage.setItem('userid', userId); // Store userId in localStorage
+        fetchCourses().then((courses) => {
+            displayCourses(courses, userId);
+            let itButton = document.getElementById("it");
+    let aiButton = document.getElementById("dg");
+    let dsButton = document.getElementById("ds");
+    let coursesContainer = document.querySelector(".container");
+    
+    itButton.addEventListener("click", () => {
+        console.log("Fetching and displaying IT courses...");
+        fetchCourses("It").then(courses => {
+            coursesContainer.style.display = "block";
+            console.log("IT Courses Data:", courses);
+            displayCourses(courses, userId, "It");
         });
     });
-});
+    
+    aiButton.addEventListener("click", () => {
+        console.log("Fetching and displaying AI courses...");
+        fetchCourses("Designing").then(courses => {
+            coursesContainer.style.display = "block";
+            console.log("AI Courses Data:", courses);
+            displayCourses(courses, userId, "AI");
+        });
+    });
+    
+    dsButton.addEventListener("click", () => {
+        console.log("Fetching and displaying Data Science courses...");
+        fetchCourses("DataScience").then(courses => {
+            coursesContainer.style.display = "block";
+            console.log("Data Science Courses Data:", courses);
+            displayCourses(courses, userId, "DataScience");
+        });
+    });
+        });
+    
 
-// Handle search bar
-searchBar.addEventListener("input", async (e) => {
-    const query = e.target.value.toLowerCase();
-    if (query === "") {
-        coursesContainer.classList.add("hidden");
+// const fetchCourses = async (selectedCategory = null) => {
+//     try {
+//         const coursesSnapshot = await get(ref(database, "admin/courses"));
+//         if (!coursesSnapshot.exists()) return [];
+
+//         const coursesData = coursesSnapshot.val();
+//         const allCourses = [];
+
+//         // Loop through categories
+//         Object.keys(coursesData).forEach((category) => {
+//             if (!selectedCategory || selectedCategory === category) {
+//                 const categoryCourses = coursesData[category];
+//                 Object.values(categoryCourses).forEach((course) => {
+//                     allCourses.push({ ...course, type: course.type || "free", category });
+//                 });
+//             }
+//         });
+
+//         console.log("Courses retrieved successfully:", allCourses);
+//         return allCourses;
+//     } catch (error) {
+//         console.error("Error fetching courses:", error);
+//         return [];
+//     }
+// };
+
+const displayCourses = (courses, userId) => {
+    const coursesContainer = document.getElementById("courses-container");
+    coursesContainer.innerHTML = "";
+
+    if (courses.length === 0) {
+        coursesContainer.innerHTML = `<p>No courses available.</p>`;
         return;
     }
 
-    const courses = await fetchCourses();
-    const filteredCourses = courses.filter(course => course.title.toLowerCase().includes(query));
-    coursesContainer.classList.remove("hidden");
-    displayCourses(filteredCourses);
-});
+    courses.forEach((course) => {
+        const courseElement = document.createElement("div");
+        courseElement.className = "col-md-4 mb-4 course-card";
 
-// Check auth state
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        userId = user.uid;
-        welcomeMessage.textContent = `Hi, Welcome ${user.email}`;
-        loginBtn.classList.add("hidden");
-        logoutBtn.classList.remove("hidden");
-    } else {
-        userId = null;
-        welcomeMessage.textContent = "Hi, Welcome User";
-        loginBtn.classList.remove("hidden");
-        logoutBtn.classList.add("hidden");
-    }
-});
+        let imageUrl = course.image;
+        if (imageUrl && imageUrl.startsWith("hhttps")) {
+            imageUrl = imageUrl.replace("hhttps", "https");
+        }
 
-// Event listeners for play all buttons
-document.querySelectorAll('.play-all').forEach(button => {
-    button.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const courseTitle = button.dataset.courseTitle;
-        const course = courses.find(c => c.title === courseTitle);
+        const isPremium = course.type === "premium";
 
-        if (course) {
-            try {
-                const isEnrolled = await checkEnrollment(course, userId);
+        courseElement.innerHTML = `
+            <div class="card h-100">
+                <div class="image-container">
+                    <img src="${imageUrl}" class="card-img-top img-fluid course-image" alt="${course.title}">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Title: ${course.title}</h5>
+                    <p class="card-text">Description: ${course.description}</p>
+                    <p class="card-price">Price: ${course.price || (isPremium ? 'Contact for Price' : 'Free')}</p>
+                    <div class="btn-container">
+                        <button class="btn btn-secondary mt-2 play-all" data-course-title="${course.title}">Play All</button>
+                        <button class="btn btn-primary enroll ${isPremium ? 'premium-enroll' : ''}" data-course-title="${course.title}" style="${isPremium ? 'background-color: orange; border-color: orange;' : ''}">
+                            ${isPremium ? 'Enroll (Premium)' : 'Enroll'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
 
-                if (isEnrolled) {
-                    if (course.type === "premium") {
-                        const isPaid = await checkPayment(course, userId);
-                        if (isPaid) {
-                            navigateToSingleCourse(course.title, course.category);
+        coursesContainer.appendChild(courseElement);
+    });
+    document.querySelectorAll('.play-all').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.preventDefault(); // Prevent default behavior
+            const courseTitle = button.dataset.courseTitle;
+            const course = courses.find(c => c.title === courseTitle);
+    
+            if (course) {
+                try {
+                    const isEnrolled = await checkEnrollment(course, userId);
+    
+                    if (isEnrolled) {
+                        if (course.type === "premium") {
+                            const isPaid = await checkPayment(course, userId);
+                            if (isPaid) {
+                                navigateToSingleCourse(course.title, course.category);
+                            } else {
+                                Swal.fire({
+                                    title: 'Info',
+                                    text: 'Please complete the payment for this premium course.',
+                                    confirmButtonText: 'OK',
+                                    showCloseButton: true
+                                });
+                            }
                         } else {
-                            Swal.fire({
-                                title: 'Info',
-                                text: 'Please complete the payment for this premium course.',
-                                confirmButtonText: 'OK',
-                                showCloseButton: true
-                            });
+                            navigateToSingleCourse(course.title, course.category);
                         }
                     } else {
-                        navigateToSingleCourse(course.title, course.category);
+                        Swal.fire({
+                            title: 'Info',
+                            text: 'Please enroll in the course first.',
+                            confirmButtonText: 'OK',
+                            showCloseButton: true
+                        });
                     }
-                } else {
+                } catch (error) {
+                    console.error("Error fetching course data:", error);
                     Swal.fire({
-                        title: 'Info',
-                        text: 'Please enroll in the course first.',
+                        title: 'Error!',
+                        text: 'An error occurred. Please try again later.',
+                        icon: 'error',
                         confirmButtonText: 'OK',
                         showCloseButton: true
                     });
                 }
-            } catch (error) {
-                console.error("Error fetching course data:", error);
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred. Please try again later.',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    showCloseButton: true
-                });
+            } else {
+                console.error("Course not found for title:", courseTitle);
+                Swal.fire('Error!', 'Course not found.', 'error');
             }
-        } else {
-            console.error("Course not found for title:", courseTitle);
-            Swal.fire('Error!', 'Course not found.', 'error');
-        }
+        });
     });
-});
+    // Event listeners for play all buttons
+    // document.querySelectorAll('.play-all').forEach(button => {
+    //     button.addEventListener('click', async (e) => {
+    //         e.preventDefault()
+    //         const courseTitle = button.dataset.courseTitle;
+    //         const course = courses.find(c => c.title === courseTitle);
+    
+    //         if (course) {
+    //             try {
+    //                 const isEnrolled = await checkEnrollment(course, userId);
+    
+    //                 if (isEnrolled) {
+    //                     if (course.type === "premium") {
+    //                         const isPaid = await checkPayment(course, userId);
+    //                         if (isPaid) {
+    //                             navigateToSingleCourse(course.title, course.category);
+    //                         } else {
+    //                             Swal.fire({
+    //                                 title: 'Info',
+    //                                 text: 'Please complete the payment for this premium course.',
+    //                                 confirmButtonText: 'OK',
+    //                                 showCloseButton: true
+    //                             });
+    //                         }
+    //                     } else {
+    //                         navigateToSingleCourse(course.title, course.category);
+    //                     }
+    //                 } else {
+    //                     Swal.fire({
+    //                         title: 'Info',
+    //                         text: 'Please enroll in the course first.',
+    //                         confirmButtonText: 'OK',
+    //                         showCloseButton: true
+    //                     });
+    //                 }
+    //             } catch (error) {
+    //                 console.error("Error fetching course data:", error);
+    //                 Swal.fire({
+    //                     title: 'Error!',
+    //                     text: 'An error occurred. Please try again later.',
+    //                     icon: 'error',
+    //                     confirmButtonText: 'OK',
+    //                     showCloseButton: true
+    //                 });
+    //             }
+    //         } else {
+    //             console.error("Course not found for title:", courseTitle);
+    //             Swal.fire('Error!', 'Course not found.', 'error');
+    //         }
+    //     });
+    // });
+    // Event listeners for play all buttons
+    // document.querySelectorAll('.play-all').forEach(button => {
+    //     button.addEventListener('click', async () => {
+    //         const courseTitle = button.dataset.courseTitle;
+    //         const course = courses.find(c => c.title === courseTitle);
 
-// Event listeners for enroll buttons
-document.querySelectorAll('.enroll').forEach(button => {
-    button.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const courseTitle = button.dataset.courseTitle;
-        const course = courses.find(c => c.title === courseTitle);
+    //         if (course) {
+    //             try {
+    //                 const isEnrolled = await checkEnrollment(course, userId);
 
-        if (course) {
-            await handleEnrollment(course, userId);
-        } else {
-            console.error("Course not found for title:", courseTitle);
-            Swal.fire('Error!', 'Course not found.', 'error');
-        }
+    //                 if (isEnrolled) {
+    //                     if (course.type === "premium") {
+    //                         const isPaid = await checkPayment(course, userId);
+    //                         if (isPaid) {
+    //                             navigateToSingleCourse(course.title);
+    //                         } else {
+    //                             Swal.fire({
+    //                                 title: 'Info',
+    //                                 text: 'Please complete the payment for this premium course.',
+    //                                 confirmButtonText: 'OK',
+    //                                 showCloseButton: true
+    //                             });
+    //                         }
+    //                     } else {
+    //                         navigateToSingleCourse(course.title);
+    //                     }
+    //                 } else {
+    //                     Swal.fire({
+    //                         title: 'Info',
+    //                         text: 'Please enroll in the course first.',
+    //                         confirmButtonText: 'OK',
+    //                         showCloseButton: true
+    //                     });
+    //                 }
+    //             } catch (error) {
+    //                 console.error("Error fetching course data:", error);
+    //                 Swal.fire({
+    //                     title: 'Error!',
+    //                     text: 'An error occurred. Please try again later.',
+    //                     icon: 'error',
+    //                     confirmButtonText: 'OK',
+    //                     showCloseButton: true
+    //                 });
+    //             }
+    //         } else {
+    //             console.error("Course not found for title:", courseTitle);
+    //             Swal.fire('Error!', 'Course not found.', 'error');
+    //         }
+    //     });
+    // });
+
+    // Event listeners for enroll buttons
+    document.querySelectorAll('.enroll').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.preventDefault()
+            const courseTitle = button.dataset.courseTitle;
+            const course = courses.find(c => c.title === courseTitle);
+
+            if (course) {
+                await handleEnrollment(course, userId);
+            } else {
+                console.error("Course not found for title:", courseTitle);
+                Swal.fire('Error!', 'Course not found.', 'error');
+            }
+        });
     });
-});
-
+};
 const handleEnrollment = async (course, userId) => {
     if (!course || !course.type || !course.title) {
         console.error("Course object is invalid:", course);
@@ -296,7 +432,6 @@ const enrollFreeCourse = async (course, userDetails, userId) => {
         });
     }
 };
-
 const checkEnrollment = async (course, userId) => {
     try {
         const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
@@ -320,79 +455,96 @@ const checkPayment = async (course, userId) => {
         return false; // Treat errors as not paid
     }
 };
-
 const showPaymentModule = async (course) => {
-    try {
-        const { value: userDetails } = await Swal.fire({
-            title: `Enroll in ${course.title}`,
-            html: `
-                <p>You are enrolling in: <strong>${course.title}</strong></p>
-                <input id="swal-input-name" class="swal2-input" placeholder="Your Name">
-                <input id="swal-input-email" class="swal2-input" placeholder="Email">
-                <input id="swal-input-phone" class="swal2-input" placeholder="Phone Number">
-                <label style="display: block; margin-top: 10px;">
-                    <input type="checkbox" id="swal-input-confirm" class="swal2-checkbox">
-                    I confirm that I want to enroll in this course.
-                </label>
-            `,
-            showCloseButton: true,
-            focusConfirm: false,
-            preConfirm: () => {
-                const name = document.getElementById('swal-input-name').value;
-                const email = document.getElementById('swal-input-email').value;
-                const phone = document.getElementById('swal-input-phone').value;
-                const isConfirmed = document.getElementById('swal-input-confirm').checked;
-
-                if (!name || !email || !phone) {
-                    Swal.showValidationMessage(`Please enter all required details`);
-                    return false;
+        try {
+            const { value: userDetails } = await Swal.fire({
+                title: `Enroll in ${course.title}`,
+                html: `
+                    <p>You are enrolling in: <strong>${course.title}</strong></p>
+                    <input id="swal-input-name" class="swal2-input" placeholder="Your Name">
+                    <input id="swal-input-email" class="swal2-input" placeholder="Email">
+                    <input id="swal-input-phone" class="swal2-input" placeholder="Phone Number">
+                    <label style="display: block; margin-top: 10px;">
+                        <input type="checkbox" id="swal-input-confirm" class="swal2-checkbox">
+                        I confirm that I want to enroll in this course.
+                    </label>
+                `,
+                showCloseButton: true,
+                focusConfirm: false,
+                preConfirm: () => {
+                    const name = document.getElementById('swal-input-name').value;
+                    const email = document.getElementById('swal-input-email').value;
+                    const phone = document.getElementById('swal-input-phone').value;
+                    const isConfirmed = document.getElementById('swal-input-confirm').checked;
+    
+                    if (!name || !email || !phone) {
+                        Swal.showValidationMessage(`Please enter all required details`);
+                        return false;
+                    }
+    
+                    if (!isConfirmed) {
+                        Swal.showValidationMessage(`Please confirm your enrollment`);
+                        return false;
+                    }
+    
+                    return { name, email, phone };
                 }
-
-                if (!isConfirmed) {
-                    Swal.showValidationMessage(`Please confirm your enrollment`);
-                    return false;
+            });
+              console.log("userDetails BEFORE payment:", userDetails);
+    
+            if (userDetails) {
+                const paymentSuccess = await processPayment(course);
+                if (paymentSuccess) {
+                    const paymentMethod = await selectPaymentMethod(course);
+    
+                    if (paymentMethod === 'upi') {
+                        await handleUPIPayment(course);
+                    } else if (paymentMethod === 'creditCard') {
+                        await handleCreditCardPayment(course);
+                    }
+    
+                     console.log("userDetails before enrollPaidCourse:", userDetails);
+    
+                    await enrollPaidCourse(course, userDetails);
                 }
-
-                return { name, email, phone };
             }
-        });
-
-        if (userDetails) {
-            const paymentSuccess = await processPayment(course);
-            if (paymentSuccess) {
-                const paymentMethod = await selectPaymentMethod(course);
-
-                if (paymentMethod === 'upi') {
-                    await handleUPIPayment(course);
-                } else if (paymentMethod === 'creditCard') {
-                    await handleCreditCardPayment(course);
-                }
-
-                await enrollPaidCourse(course, userDetails);
-            }
+        } catch (error) {
+           console.error("Error during payment module:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'There was an issue with the payment process. Please try again later.',
+                confirmButtonText: 'OK'
+            });
         }
-    } catch (error) {
-        console.error("Error during payment module:", error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'There was an issue with the payment process. Please try again later.',
-            confirmButtonText: 'OK'
-        });
-    }
-};
-
-const navigateToSingleCourse = (courseTitle, courseCategory) => {
-    // Store course details in localStorage
-    localStorage.setItem("courseTitle", courseTitle);
-    localStorage.setItem("courseCategory", courseCategory);
-
-    // Navigate to the single course page
-    window.location.href = "single-course.html";
-};
+    };
+    const navigateToSingleCourse = (courseTitle, courseCategory) => {
+        // Store course details in localStorage
+        localStorage.setItem("courseTitle", courseTitle);
+        localStorage.setItem("courseCategory", courseCategory);
+    
+        // Navigate to the single course page
+        window.location.href = "single-course.html";
+    };
+    // const navigateToSingleCourse = (courseTitle, courseCategory) => {
+    //     window.location.href = "./single-course.html";
+    //     console.log(`Navigating to course: ${courseTitle}, Category: ${courseCategory}`);
+        
+    //     // Store course details in localStorage
+    //     localStorage.setItem("courseTitle", courseTitle);
+    //     localStorage.setItem("courseCategory", courseCategory);
+    
+    //     // Directly navigate to the single course page
+  
+    // };
+    
+    
+// const navigateToSingleCourse = (courseTitle) => {
+//     window.location.href = `single-course.html?title=${encodeURIComponent(courseTitle)}`;
+// };
 
 const processPayment = async (course) => {
-    const paymentConfirmed = await Swal.fire({
+     const paymentConfirmed = await Swal.fire({
         title: 'Payment Confirmation',
         text: `Do you confirm to pay for ${course.title}?`,
         icon: 'question',
@@ -462,8 +614,9 @@ const handleUPIPayment = async (course) => {
     }
 };
 
+
 const handleCreditCardPayment = async (course) => {
-    const { value: formValues } = await Swal.fire({
+     const { value: formValues } = await Swal.fire({
         title: `Credit Card Payment for ${course.title}`,
         text: `Price: $${course.price}`,
         html:
@@ -503,14 +656,14 @@ const handleCreditCardPayment = async (course) => {
 };
 
 const completePayment = async (course, paymentMethod, formValues) => {
-    try {
+     try {
         if (paymentMethod === 'upi') {
             console.log(`Processing UPI payment for ${course.title} with UPI ID: ${formValues.upiId}`);
         } else if (paymentMethod === 'creditCard') {
             console.log(`Processing Credit Card payment for ${course.title} with Card: ${formValues.cardNumber}`);
         }
 
-        await enrollPaidCourse(course, formValues);
+          await enrollPaidCourse(course, formValues);
 
         Swal.fire({
             icon: 'success',
@@ -519,7 +672,7 @@ const completePayment = async (course, paymentMethod, formValues) => {
             confirmButtonText: 'OK'
         });
     } catch (error) {
-        console.error("Payment processing failed:", error);
+       console.error("Payment processing failed:", error);
         Swal.fire({
             icon: 'error',
             title: 'Error!',
@@ -530,7 +683,8 @@ const completePayment = async (course, paymentMethod, formValues) => {
 };
 
 const enrollPaidCourse = async (course, userDetails) => {
-    try {
+     try {
+         console.log("enrollPaidCourse - userDetails:", userDetails); // Log INSIDE the function
         const userCoursesRef = ref(database, `users/${userId}/enrolledCourses`);
         const userPaymentsRef = ref(database, `users/${userId}/payments`);
 
@@ -547,9 +701,9 @@ const enrollPaidCourse = async (course, userDetails) => {
             type: course.type,
             price: course.price || 'Free',
             enrolledOn: new Date().toISOString(),
-            email: userDetails.email,
-            phone: userDetails.phone,
-            name: userDetails.name
+            email: userDetails.email, // Use userDetails.email
+            phone: userDetails.phone, // Use userDetails.phone
+            name: userDetails.name  // Use userDetails.name
         });
 
         payments.push({
@@ -558,6 +712,8 @@ const enrollPaidCourse = async (course, userDetails) => {
             amount: course.price,
             paidOn: new Date().toISOString()
         });
+
+        console.log("enrolledCourses before set:", enrolledCourses); // Log before setting
 
         await set(userCoursesRef, enrolledCourses);
         await set(userPaymentsRef, payments);
@@ -570,12 +726,17 @@ const enrollPaidCourse = async (course, userDetails) => {
         });
 
     } catch (error) {
-        console.error("Error enrolling in paid course:", error);
+       console.error("Error enrolling in paid course:", error); // Detailed error logging
         Swal.fire({
             icon: 'error',
             title: 'Error!',
-            text: `There was an issue enrolling in the course or processing payment: ${error.message}`,
+            text: `There was an issue enrolling in the course or processing payment: ${error.message}`, // Include error message
             confirmButtonText: 'OK'
         });
     }
 };
+    
+}else {
+        window.location.href = "index.html"; 
+    }
+});
