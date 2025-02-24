@@ -39,6 +39,9 @@
                         <a class="nav-link hover:text-gray-300" href="#categories">Categories</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link hover:text-gray-300" href="#services">Services</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link hover:text-gray-300" href="#reviews">Reviews</a>
                     </li>
                     <li class="nav-item">
@@ -59,28 +62,36 @@
     </nav>
 
      <!-- About Section -->
-     <section id="about" class="py-16 bg-white">
-        <div class="container">
-            <h2 class="text-2xl font-bold text-center mb-8">About Us</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <img src="https://education.ec.europa.eu/sites/default/files/2022-12/AdobeStock_530649975.jpg" alt="About Us" class="rounded-lg shadow-lg">
-                </div>
-                <div>
-                    <p class="text-gray-700 text-lg">
-                        EduSpark is your gateway to learning anything, anywhere. We offer a wide range of courses to help you achieve your goals. Whether you're looking to advance your career or learn something new, EduSpark has you covered.
-                        EduSpark is your gateway to learning anything, anywhere. We offer a wide range of courses to help you achieve your goals. Whether you're looking to advance your career or learn something new, EduSpark has you covered.
-                       
-                        EduSpark is your gateway to learning anything, anywhere. We offer a wide range of courses to help you achieve your goals. Whether you're looking to advance your career or learn something new, EduSpark has you covered.
-                    </p>
-                   
-                </div>
+      <!-- About Section -->
+<!-- About Section -->
+<section id="about" class="py-16 bg-white">
+    <div class="container mx-auto px-6 py-4">
+        <h2 class="text-2xl font-bold text-center mb-8">About Us</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <!-- Image Section -->
+            <div>
+                <img src="https://education.ec.europa.eu/sites/default/files/2022-12/AdobeStock_530649975.jpg" 
+                    alt="About Us" class="rounded-lg shadow-lg w-full">
+            </div>
+            <!-- Text Section -->
+            <div class="flex flex-col items-center ">
+                <p class="text-gray-700 text-lg mb-6">
+                    EduSpark is your gateway to learning anything, anywhere. We offer a wide range of courses to help you achieve your goals. Whether you're looking to advance your career or learn something new, EduSpark has you covered.
+                </p>
+                <p class="text-gray-700 text-lg mb-6">
+                    Our platform provides expert-led courses, interactive lessons, and a flexible learning experience tailored to your needs.
+                </p>
+                <!-- Centered Get Started Button -->
+                <a>
+                   <button class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-300 btn btn-info mx-2" data-toggle="modal" data-target="#signupModal">Get Started</button>
+                </a>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Categories Section -->
-    <section id="categories" class="py-16 bg-gray-50">
+    <section id="categories" class="py-16 bg-white">
         <div class="container">
             <h2 class="text-2xl font-bold text-center mb-8">Categories</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -102,9 +113,39 @@
             </div>
         </div>
     </section>
+      <!-- Services Section -->
+<section id="services" class="py-12 bg-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-8">Our Services</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card 1: Online Courses -->
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+                <i class="fas fa-chalkboard-teacher text-4xl text-blue-500 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Online Courses</h3>
+                <p class="text-gray-600">Access high-quality courses from industry experts anytime, anywhere.</p>
+            </div>
+
+            <!-- Card 2: Expert Instructors -->
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+                <i class="fas fa-user-tie text-4xl text-green-500 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Expert Instructors</h3>
+                <p class="text-gray-600">Learn from top industry professionals with real-world experience.</p>
+            </div>
+
+            <!-- Card 3: Certifications -->
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+                <i class="fas fa-graduation-cap text-4xl text-purple-500 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Certifications</h3>
+                <p class="text-gray-600">Earn recognized certificates to boost your career prospects.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 
     <!-- Reviews Section -->
-    <section id="reviews" class="py-16 bg-gray-50">
+    <section id="reviews" class="py-16 bg-white">
         <div class="container">
             <h4 class="text-2xl font-bold text-center mb-8">What Our Students Say</h4>
             <div id="reviewCarousel" class="carousel slide" data-ride="carousel">
@@ -141,26 +182,27 @@
     </section>
 
   <!-- Contact Section -->
-<section id="contact" class="py-16 bg-white">
-    <div class="container">
-        <h2 class="text-2xl font-bold text-center mb-8">Contact Us</h2>
-        <p class="text-gray-700 text-center mb-8">Have questions? Reach out to us at <a href="mailto:contact@eduspark.com" class="text-blue-500">contact@eduspark.com</a>.</p>
-        <div class="flex justify-center space-x-4">
-            <a href="tel:+1234567890" class="text-blue-500 hover:text-blue-700">
-                <i class="fas fa-phone text-2xl"></i>
-            </a>
-            <a href="https://wa.me/1234567890" class="text-green-500 hover:text-green-700">
-                <i class="fab fa-whatsapp text-2xl"></i>
-            </a>
-            <a href="https://www.instagram.com/eduspark" class="text-pink-500 hover:text-pink-700">
-                <i class="fab fa-instagram text-2xl"></i>
-            </a>
-            <a href="https://www.facebook.com/eduspark" class="text-blue-600 hover:text-blue-800">
-                <i class="fab fa-facebook text-2xl"></i>
-            </a>
+<section id="contact" class="py-8 bg-white">
+    <div class="container mx-auto px-2 text-center">
+        <h2 class="text-xl font-bold mb-4">Contact Us</h2>
+        
+        <!-- Contact Details -->
+        <p class="mb-1 text-sm">
+            Contact: <a href="tel:+919059938941" class="hover:underline">+91 90599-38941</a> 
+            <br> 
+            Email: <a href="mailto:eduspark@gmail.com" class="hover:underline">eduspark@gmail.com</a>
+        </p>
+
+        <!-- Social Icons (Centered & Responsive) -->
+        <div class="flex justify-center gap-3 mt-3 text-lg">
+            <a href="#" class="hover:text-blue-400"><i class="fab fa-facebook"></i></a>
+            <a href="#" class="hover:text-blue-300"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="hover:text-pink-500"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="hover:text-blue-600"><i class="fab fa-linkedin"></i></a>
         </div>
     </div>
 </section>
+
 
     <!-- Footer -->
     <footer class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8">
@@ -223,7 +265,7 @@
                             <input type="password" class="form-control" id="signupPassword" required>
                         </div>
                         <button type="submit" class="btn btn-primary" id="emailSignupButton">Sign Up</button>
-                        <p>Already have account ? <button class="btn btn-outline-light mx-2" data-toggle="modal" data-target="#loginModal">Login</button></p>
+                        <p>Already have account ? <button class="btn btn btn-primary  mx-2" data-toggle="modal" data-target="#loginModal">Login</button></p>
                     </form>
                 </div>
             </div>
@@ -264,7 +306,6 @@
     <script type="module" src="index.js"></script>
 </body>
 </html>
-
 
 
 

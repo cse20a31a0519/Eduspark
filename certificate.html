@@ -80,6 +80,41 @@
         document.getElementById('course-name').textContent = courseName;
         document.getElementById('student-name').textContent = studentName;
         document.getElementById('completion-date').textContent = date;
+
+        // Store the certificate in Firebase
+        const userId = localStorage.getItem("userid");
+        if (!userId) {
+            alert("User not logged in.");
+            window.location.href = "Home.html"; // Redirect to login page
+        }
+
+        const certificateData = {
+            courseTitle: courseName,
+            studentName: studentName,
+            timestamp: new Date().toISOString()
+        };
+
+        // Store the certificate in Firebase under the user's certificates node
+        fetch(`https://index-16f53-default-rtdb.firebaseio.com/users/${userId}/certificates.json`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(certificateData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to store certificate in Firebase.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Certificate stored successfully:", data);
+        })
+        .catch(error => {
+            console.error("Error storing certificate:", error);
+            alert("Failed to store certificate. Please try again.");
+        });
     </script>
 </body>
 </html>

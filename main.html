@@ -80,48 +80,62 @@ button {
       .container {
         display: none; /* Hide the container initially */
     }
+    .footer {
+        background-color: #2563EB;
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
         
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-blue-600" style="background-color: #2563EB;">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#"><h2> EduSpark </h2></a>
+                <a class="navbar-brand text-white" href="#" style="font-weight: bold;"><i class="fas fa-graduation-cap mr-2"></i> EduSpark</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mx-auto"> 
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="main.html"><span>Home</span>
+                                <i></i>
+                            </a>
+                        </li> 
                       <li class="nav-item">
-                        <a class="nav-link" href="userProfile.html"><h5>User Profile</h5>
+                        <a class="nav-link text-white" href="userProfile.html"><span>User Profile</span>
                             <i></i>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="enrolledcourses.html">
-                            <i></i> <h5>My Courses</h5>
+                        <a class="nav-link text-white" href="enrolledcourses.html">
+                            <i></i> <span>My Courses</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="payment.html">
-                            <i></i><h5>Payments</h5>
+                        <a class="nav-link text-white" href="payment.html">
+                            <i></i><span>Payments</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="#features">
-                          <i></i> <h5>Certificates</h5>
+                      <a class="nav-link text-white" href="Saved.html">
+                          <i></i> <span>Certificates</span>
                       </a>
                   </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contact">
-                            <i></i><h5>Saved Videos</h5>
+                        <a class="nav-link text-white" href="">
+                            <i></i><span>Saved Videos</span>
                         </a>
                     </li>
                     
                     </ul>
                     <div class="auth-buttons d-flex">
-                                <button id="Logout">Logout</button>
+                                <button id="Logout" class="btn btn-light">Logout</button>
                                 </div>
                 </div>
             </div>
@@ -157,6 +171,9 @@ button {
      <div class="container">
         <div class="row" id="courses-container"></div>
     </div>
+    <footer class="footer">
+        <p>&copy; 2023 EduSpark. All rights reserved.</p>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
     <script type="module" src="main.js"></script>

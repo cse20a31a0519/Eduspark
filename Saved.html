@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Videos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1;
+        }
+        .footer {
+            background-color: #2563EB;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            margin-top: auto;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .card-body {
+            padding: 15px;
+        }
+        .card-title {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .video-container {
+            display: none; /* Initially hidden */
+            text-align: center;
+            margin-top: 10px;
+        }
+        iframe {
+            width: 100%;
+            height: 250px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2563EB;">
+            <div class="container-fluid">
+                <a class="navbar-brand text-white" href="#" style="font-weight: bold;">
+                    <i class="fas fa-graduation-cap mr-2"></i> EduSpark
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item"><a class="nav-link text-white" href="main.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="userProfile.html">User Profile</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="enrolledcourses.html">My Courses</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="payment.html">Payments</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="#">Certificates</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="#">Saved Videos</a></li>
+                    </ul>
+                    <button id="Logout" class="btn btn-light">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="content container mt-5">
+            <h2>Saved Videos</h2>
+            <div id="videos-list" class="row"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2023 EduSpark. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5iAUnK_5AP7ijrcQvlRfvCSfXrH9n6Ak",
+            authDomain: "index-16f53.firebaseapp.com",
+            projectId: "index-16f53",
+            storageBucket: "index-16f53.firebasestorage.app",
+            messagingSenderId: "171804052014",
+            appId: "1:171804052014:web:c38d9d50835d551cafadbf",
+            databaseURL: "https://index-16f53-default-rtdb.firebaseio.com/"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("User is logged in:", user.uid);
+                fetchSavedVideos(user.uid);
+            } else {
+                console.log("User is not logged in");
+                window.location.href = "login.html";
+            }
+        });
+
+        // Fetch saved videos
+        function fetchSavedVideos(userId) {
+            const videosRef = ref(database, `users/${userId}/watchLater`);
+
+            onValue(videosRef, (snapshot) => {
+                const videosData = snapshot.val();
+                console.log("Saved Videos Data:", videosData);
+
+                const videosList = document.getElementById('videos-list');
+                videosList.innerHTML = '';
+
+                if (videosData) {
+                    Object.keys(videosData).forEach((key) => {
+                        const video = videosData[key];
+
+                        const description = video.description ? video.description : "No description available";
+                        const savedDate = video.timestamp ? new Date(video.timestamp).toLocaleDateString() : "Unknown date";
+
+                        // Convert YouTube URL to embeddable format
+                        let embedUrl = video.url.replace("watch?v=", "embed/");
+
+                        const videoCard = document.createElement("div");
+                        videoCard.classList.add("col-md-6", "mb-4");
+                        videoCard.innerHTML = `
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${video.title}</h5>
+                                    <p class="card-text">Description: ${description}</p>
+                                    <p class="card-text">Saved On: ${savedDate}</p>
+                                    <button class="btn btn-primary watch-video" data-url="${embedUrl}">Watch Video</button>
+                                    <div class="video-container">
+                                        <iframe src="" frameborder="0" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                        videosList.appendChild(videoCard);
+
+                        // Add event listener to button
+                        videoCard.querySelector(".watch-video").addEventListener("click", function () {
+                            const videoContainer = videoCard.querySelector(".video-container");
+                            const iframe = videoCard.querySelector("iframe");
+                            iframe.src = this.getAttribute("data-url");
+                            videoContainer.style.display = "block";
+                        });
+                    });
+                } else {
+                    videosList.innerHTML = '<p>No saved videos found.</p>';
+                }
+            }, (error) => {
+                console.error("Error fetching saved videos:", error);
+            });
+        }
+
+        // Logout functionality
+        document.getElementById('Logout').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                console.log("User logged out successfully");
+                window.location.href = "login.html";
+            }).catch((error) => {
+                console.error("Logout error:", error);
+            });
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-import { getAuth, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
 import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
 // Firebase configuration
@@ -734,9 +734,47 @@ const enrollPaidCourse = async (course, userDetails) => {
             confirmButtonText: 'OK'
         });
     }
+   
 };
     
 }else {
         window.location.href = "index.html"; 
     }
 });
+
+// Logout functionality with SweetAlert confirmation
+const logoutButton = document.getElementById("Logout");
+if (logoutButton) {
+    logoutButton.addEventListener("click", async () => {
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to logout?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, logout!',
+            cancelButtonText: 'Cancel'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await signOut(auth);
+                Swal.fire({
+                    title: 'Logged out!',
+                    text: 'You have been logged out successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = "index.html";
+                });
+            } catch (error) {
+                console.error("Error logging out:", error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while logging out. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    });
+}
