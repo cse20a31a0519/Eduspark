@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const fetchCourseDetails = async (title, category) => {
     try {
-        const response = await fetch(`https://eduspark-99dff-default-rtdb.firebaseio.com/admin/courses/${category}.json`);
+        const response = await fetch(`https://index-16f53-default-rtdb.firebaseio.com/admin/courses/${category}.json`);
         const coursesData = await response.json();
 
         console.log("Fetched courses data:", coursesData); // Log the fetched data
@@ -172,6 +172,11 @@ document.getElementById("generate-certificate").addEventListener("click", async 
     const userId = localStorage.getItem("userid");
     const courseTitle = localStorage.getItem("courseTitle");
     const userName = localStorage.getItem("userName");
+
+    // Debugging logs
+    console.log("User ID:", userId);
+    console.log("Course Title:", courseTitle);
+    console.log("User Name:", userName);
 
     if (!userId || !courseTitle || !userName) {
         Swal.fire({

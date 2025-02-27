@@ -58,6 +58,7 @@
     </style>
 </head>
 <body>
+
     <div class="certificate" id="certificate-content">
         <h1>Certificate of Completion</h1>
         <p>This certifies that</p>
@@ -69,19 +70,22 @@
     </div>
 
     <script>
+        // Get parameters from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const courseName = urlParams.get('courseName');
         const studentName = urlParams.get('studentName');
         const date = new Date().toLocaleDateString();
 
+        // Populate the certificate with dynamic data
         document.getElementById('course-name').textContent = courseName;
         document.getElementById('student-name').textContent = studentName;
         document.getElementById('completion-date').textContent = date;
 
+        // Store the certificate in Firebase
         const userId = localStorage.getItem("userid");
         if (!userId) {
             alert("User not logged in.");
-            window.location.href = "Home.html";
+            window.location.href = "Home.html"; // Redirect to login page
         }
 
         const certificateData = {
@@ -90,6 +94,8 @@
             timestamp: new Date().toISOString()
         };
 
+        // Store the certificate in Firebase under the user's certificates node
+        
         fetch(`https://index-16f53-default-rtdb.firebaseio.com/users/${userId}/certificates.json`, {
             method: "POST",
             headers: {

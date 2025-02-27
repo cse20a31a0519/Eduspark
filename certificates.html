@@ -3,59 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saved Videos</title>
+    <title>Certificates</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        .wrapper {
-            min-height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        .content {
-            flex: 1;
-        }
+        /* Your CSS styles here */
         .footer {
-            background-color: #2563EB;
-            color: white;
+            background-color: #2563EB; /* Blue background */
+            color: white; /* White text */
             padding: 10px 0;
             text-align: center;
-            margin-top: auto;
-        }
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-        .card-body {
-            padding: 15px;
-        }
-        .card-title {
-            text-align: center;
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .video-container {
-            display: none; /* Initially hidden */
-            text-align: center;
-            margin-top: 10px;
-        }
-        iframe {
-            width: 100%;
-            height: 250px;
-            border-radius: 8px;
+            margin-top: auto; /* Push footer to the bottom */
         }
     </style>
 </head>
@@ -76,8 +36,8 @@
                         <li class="nav-item"><a class="nav-link text-white" href="userProfile.html">User Profile</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="enrolledcourses.html">My Courses</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="payment.html">Payments</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="certificates.html">Certificates</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="Saved.html">Saved Videos</a></li>
+                        <li class="nav-item"><a class="nav-link text-white active" href="#">Certificates</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="savedvideos.html">Saved Videos</a></li>
                     </ul>
                     <button id="Logout" class="btn btn-light">Logout</button>
                 </div>
@@ -86,8 +46,8 @@
 
         <!-- Main Content -->
         <div class="content container mt-5">
-            <h2>Saved Videos</h2>
-            <div id="videos-list" class="row"></div>
+            <h2>Certificates</h2>
+            <div id="certificates-list" class="d-flex flex-wrap justify-content-center"></div>
         </div>
 
         <!-- Footer -->
@@ -125,65 +85,65 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 console.log("User is logged in:", user.uid);
-                fetchSavedVideos(user.uid);
+                fetchCertificates(user.uid);
             } else {
                 console.log("User is not logged in");
                 window.location.href = "login.html";
             }
         });
 
-        // Fetch saved videos
-        function fetchSavedVideos(userId) {
-            const videosRef = ref(database, `users/${userId}/watchLater`);
+        // Fetch certificates
+        function fetchCertificates(userId) {
+            const certificatesRef = ref(database, `users/${userId}/certificates`);
 
-            onValue(videosRef, (snapshot) => {
-                const videosData = snapshot.val();
-                console.log("Saved Videos Data:", videosData);
+            onValue(certificatesRef, (snapshot) => {
+                const certificatesData = snapshot.val();
+                console.log("Certificates Data:", certificatesData);
 
-                const videosList = document.getElementById('videos-list');
-                videosList.innerHTML = '';
+                const certificatesList = document.getElementById('certificates-list');
+                certificatesList.innerHTML = '';
 
-                if (videosData) {
-                    Object.keys(videosData).forEach((key) => {
-                        const video = videosData[key];
+                if (certificatesData) {
+                    const uniqueCertificates = {};
 
-                        const description = video.description ? video.description : "No description available";
-                        const savedDate = video.timestamp ? new Date(video.timestamp).toLocaleDateString() : "Unknown date";
+                    // Filter duplicates
+                    Object.keys(certificatesData).forEach((key) => {
+                        const certificate = certificatesData[key];
 
-                        // Convert YouTube URL to embeddable format
-                        let embedUrl = video.url.replace("watch?v=", "embed/");
+                        // Ensure certificate has both courseTitle and studentName
+                        if (certificate.courseTitle && certificate.studentName) {
+                            const uniqueKey = `${certificate.courseTitle}-${certificate.studentName}`;
 
-                        const videoCard = document.createElement("div");
-                        videoCard.classList.add("col-md-6", "mb-4");
-                        videoCard.innerHTML = `
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">${video.title}</h5>
-                                    <p class="card-text">Description: ${video}</p>
-                                    <p class="card-text">Saved On: ${savedDate}</p>
-                                    <button class="btn btn-primary watch-video" data-url="${embedUrl}">Watch Video</button>
-                                    <div class="video-container">
-                                        <iframe src="" frameborder="0" allowfullscreen></iframe>
-                                    </div>
-                                </div>
+                            // Only add the certificate if it doesn't already exist
+                            if (!uniqueCertificates[uniqueKey]) {
+                                uniqueCertificates[uniqueKey] = certificate;
+                            }
+                        }
+                    });
+
+                    // Display unique certificates
+                    Object.values(uniqueCertificates).forEach((certificate) => {
+                        const issueDate = certificate.timestamp ? new Date(certificate.timestamp).toLocaleDateString() : "Unknown date";
+
+                        const certificateCard = document.createElement("div");
+                        certificateCard.classList.add("card");
+                        certificateCard.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title">${certificate.courseTitle}</h5>
+                                <p class="card-text">Issued To: ${certificate.studentName}</p>
+                                <p class="card-text">Issued On: ${issueDate}</p>
+                              
+                                <button class="btn btn-primary btn-view-certificate" onclick="viewCertificate('${certificate.courseTitle}', '${certificate.studentName}')">View Certificate</button>
                             </div>
                         `;
 
-                        videosList.appendChild(videoCard);
-
-                        // Add event listener to button
-                        videoCard.querySelector(".watch-video").addEventListener("click", function () {
-                            const videoContainer = videoCard.querySelector(".video-container");
-                            const iframe = videoCard.querySelector("iframe");
-                            iframe.src = this.getAttribute("data-url");
-                            videoContainer.style.display = "block";
-                        });
+                        certificatesList.appendChild(certificateCard);
                     });
                 } else {
-                    videosList.innerHTML = '<p>No saved videos found.</p>';
+                    certificatesList.innerHTML = '<p>No certificates found.</p>';
                 }
             }, (error) => {
-                console.error("Error fetching saved videos:", error);
+                console.error("Error fetching certificates:", error);
             });
         }
 
@@ -196,6 +156,14 @@
                 console.error("Logout error:", error);
             });
         });
+    </script>
+
+    <!-- Define viewCertificate in global scope -->
+    <script>
+        // View Certificate
+        function viewCertificate(courseTitle, studentName) {
+            window.location.href = `certificate.html?courseName=${encodeURIComponent(courseTitle)}&studentName=${encodeURIComponent(studentName)}`;
+        }
     </script>
 
     <!-- Bootstrap JS -->
